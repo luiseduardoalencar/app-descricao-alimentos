@@ -16,6 +16,26 @@ import base64
 from io import BytesIO
 from datetime import datetime
 
+USERS = {
+    "mariaeduarda@email.com": "admin123",
+    "gabrielgentil@email.com": "admin123",
+    "luiseduardo@gmail.com": "admin123",
+    "carlosmariano@gmail.com": "admin123",
+    "samuelmatheus@gmail.com": "admin123"
+}
+
+# Tela de login
+def login():
+    st.title("🔐 Login")
+    email = st.text_input("Email")
+    password = st.text_input("Senha", type="password")
+    if st.button("Entrar"):
+        if email in USERS and USERS[email] == password:
+            st.session_state['logged_in'] = True
+            st.success("Login realizado com sucesso!")
+        else:
+            st.error("Email ou senha inválidos.")
+
 def encode_image(image):
     if image.mode == 'RGBA':
         image = image.convert('RGB')  
@@ -44,6 +64,14 @@ def describe_image(image, api_key):
     return response.content
 
 def main():
+    
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+
+    if not st.session_state['logged_in']:
+        login()
+        return
+
     st.set_page_config(page_title="App de descrição de imagem", page_icon=":camera:")
     st.title("📷 App para descrição de imagem")
 
