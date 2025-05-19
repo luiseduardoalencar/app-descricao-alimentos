@@ -98,12 +98,12 @@ def main():
 
         if st.button("Calcular calorias"):
             with st.spinner("Calculando..."):
-                foods, comentario = calculo_nutricional.detect_foods(image, api_key)
+                foods, comentario = calculo_nutricional.identificar_comida(image, api_key)
 
                 if not foods:
                     st.warning("Não foi possível identificar alimentos na foto. Tente novamente")
                 else:
-                    tabela = calculo_nutricional.make_table(foods)
+                    tabela = calculo_nutricional.criar_tabela(foods)
                     st.dataframe(tabela, use_container_width=True)
 
                     total = calculo_nutricional.total_kcal(foods)

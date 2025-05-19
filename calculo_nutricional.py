@@ -55,7 +55,7 @@ def _extract_json_and_comment(text: str) -> tuple[str, str]:
     comment = text.split("</JSON>", 1)[1].strip()
     return json_block, comment
 
-def detect_foods(img: Image.Image, gemini_api_key: str):
+def identificar_comida(img: Image.Image, gemini_api_key: str):
     model   = _get_model(gemini_api_key)
     enc_img = _encode_image(img)
 
@@ -93,7 +93,7 @@ def _calories_per_100g(food: str) -> float | None:
                 return n["value"]          # kcal
     return None
 
-def make_table(foods: list[dict]) -> pd.DataFrame:
+def criar_tabela(foods: list[dict]) -> pd.DataFrame:
     rows = []
     for item in foods:
         kcal = _calories_per_100g(item["name"])
