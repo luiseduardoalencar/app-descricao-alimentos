@@ -2,7 +2,7 @@ import streamlit as st
 from PyPDF2 import PdfReader
 import pandas as pd
 import base64
-import os
+import calculo_nutricional
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -24,6 +24,7 @@ USERS = {
     "samuelmatheus@gmail.com": "admin123"
 }
 
+
 # Tela de login
 def login():
     st.title("🔐 Login")
@@ -36,12 +37,14 @@ def login():
         else:
             st.error("Email ou senha inválidos.")
 
+
 def encode_image(image):
     if image.mode == 'RGBA':
-        image = image.convert('RGB')  
+        image = image.convert('RGB')
     buffered = BytesIO()
     image.save(buffered, format="JPEG")
     return base64.b64encode(buffered.getvalue()).decode()
+
 
 def describe_image(image, api_key):
     model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=api_key)
@@ -63,8 +66,8 @@ def describe_image(image, api_key):
 
     return response.content
 
+
 def main():
-    
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
@@ -92,6 +95,24 @@ def main():
                 description = describe_image(image, api_key)
                 st.success("Descrição gerada!")
                 st.write(description)
+
+        if st.button("Calcular calorias"):
+            with st.spinner("Calculando..."):
+                foods, comentario = calculo_nutricional.identificar_comida(image, api_key)
+
+                if not foods:
+                    st.warning("Não foi possível identificar alimentos na foto. Tente novamente")
+                else:
+                    tabela = calculo_nutricional.criar_tabela(foods)
+                    st.dataframe(tabela, use_container_width=True)
+
+                    total = calculo_nutricional.total_kcal(foods)
+                    st.markdown(f"Total aproximado: **{total:.0f} kcal**")
+
+                    if comentario:
+                        st.markdown(f"**Comentário:** {comentario}")
+
+
 
 if __name__ == "__main__":
     main()
