@@ -7,3 +7,6 @@ PyPDF2
 google-ai-generativelanguage
 langchain-community
 pandas
+gTTS
+Pillow
+requests
